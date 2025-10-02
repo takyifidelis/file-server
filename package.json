@@ -1,0 +1,24 @@
+{
+  "name": "fileserver",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "redisService": "docker compose up -d redis",
+    "build-all-freshly": "docker compose down -v && docker compose up --build -d",
+    "server": "ssh admin@172.30.10.210",
+    "docker-build": "docker build -t fileserver .",
+    "docker-publish": "docker tag fileserver eawebmaster20/fileserver:latest && docker push eawebmaster20/fileserver:latest",
+    "copy-to-server": "scp nginx.conf admin@172.30.10.210:~/"
+  },
+  "dependencies": {
+    "connect-redis": "^7.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "multer": "^1.4.5-lts.1",
+    "redis": "^4.6.7"
+  }
+}

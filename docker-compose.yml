@@ -1,0 +1,51 @@
+version: "3.8"
+services:
+  fileserver:
+    image: eawebmaster20/fileserver:latest
+    ports:
+      - "3005:3000"
+    environment:
+      - UPLOAD_DIR=/app/storage
+      - REDIS_URL=redis://redis:6379
+      - BASE_URL=https://yourdomain.com/files
+    volumes:
+      - ./storage:/app/storage
+      - ./logs:/app/logs
+    depends_on:
+      - redis
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+  loki:
+    image: grafana/loki:2.9.4
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml
+      - loki_data:/loki
+  promtail:
+    image: grafana/promtail:2.9.4
+    volumes:
+      - ./logs:/var/log/app
+      - ./promtail-config.yaml:/etc/promtail/config.yaml
+    command: -config.file=/etc/promtail/config.yaml
+    depends_on:
+      - loki
+  grafana:
+    image: grafana/grafana:10.2.3
+    ports:
+      - "3001:3000"
+    depends_on:
+      - loki
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+volumes:
+  redis_data:
+  loki_data:
+  grafana_data:
