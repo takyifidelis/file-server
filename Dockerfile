@@ -1,5 +1,5 @@
 # Use official Node.js LTS image
-FROM node:18-alpine
+FROM node:alpine
 
 # Set working directory
 WORKDIR /app
@@ -10,12 +10,14 @@ RUN npm install --production
 
 # Copy source code and storage directory
 COPY src ./src
+COPY .env ./.env
+COPY openapi.json ./openapi.json
 
 #check directory
 RUN ls -la ./src
 
 # Expose port
-EXPOSE 3005
+EXPOSE 3000
 
 # Start the server
 CMD ["node", "src/index.js"]
