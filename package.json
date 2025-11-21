@@ -10,12 +10,13 @@
     "server": "ssh admin@172.30.10.210",
     "docker-build": "docker build -t fileserver .",
     "docker-publish": "docker tag fileserver eawebmaster20/fileserver:latest && docker push eawebmaster20/fileserver:latest",
-    "copy-to-server": "scp nginx.conf admin@172.30.10.210:~/"
+    "copy-to-server": "scp docker-compose.yml admin@172.30.10.210:~/",
+    "sh": "docker exec -it 80d3 sh"
   },
   "dependencies": {
     "connect-redis": "^7.0.0",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.2",
+    "dotenv": "^17.2.3",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "multer": "^1.4.5-lts.1",
