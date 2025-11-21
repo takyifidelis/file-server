@@ -102,10 +102,31 @@ if (cluster.isPrimary) {
     res.send("File server is running");
   });
 
+  app.delete("/:filename", async (req, res) => {
+    const filePath = path.join(UPLOAD_DIR, req.params.filename);
+    console.log('request recieved ', req.params.filename)
+    try {
+      // Delete file from filesystem
+      await fs.promises.unlink(filePath);
+      
+      // Remove file metadata from Redis
+      await redisClient.del(`upload:${req.params.filename}`);
+      
+      res.json({ message: "File deleted successfully" });
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        return res.status(404).json({ error: "File not found" });
+      }
+      console.error("Error deleting file:", err);
+      res.status(500).json({ error: "Failed to delete file" });
+    }
+  });
+
   // Serve files (Nginx should handle this in production)
   app.use("/files", express.static(UPLOAD_DIR));
 
   app.listen(process.env.PORT, () => {
     console.log(`Worker ${process.pid} started on port ${process.env.PORT}`);
+    console.log(`url is ${BASE_URL}`);
   });
 }
