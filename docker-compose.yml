@@ -15,6 +15,8 @@ services:
     image: eawebmaster20/fileserver
     ports:
       - "3005:3000"
+    env_file:
+      - .env
     environment:
       - UPLOAD_DIR=/app/storage
       - REDIS_URL=redis://redis:6379/0
@@ -68,7 +70,7 @@ services:
   app:
     image: eawebmaster20/api_server:latest
     ports:
-      - "3000:3000"
+      - "3005:3000"
     env_file:
       - .env-api
     depends_on:
