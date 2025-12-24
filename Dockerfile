@@ -17,7 +17,7 @@ COPY openapi.json ./openapi.json
 RUN ls -la ./src
 
 # Expose port
-EXPOSE 3000
+EXPOSE 3005
 
 # Start the server
 CMD ["node", "src/index.js"]
