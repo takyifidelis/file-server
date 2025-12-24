@@ -15,8 +15,8 @@ import cors from "cors";
 dotenv.config();
 
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, "../storage");
-const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
-const BASE_URL = process.env.BASE_URL || "https://yourdomain.com/files";
+const REDIS_URL =  process.env.FILESERVER_REDIS_URL || "redis://localhost:6379/0";
+const BASE_URL = process.env.FILESERVER_BASE_URL || "https://yourdomain.com/files";
 
 if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
@@ -43,10 +43,13 @@ if (cluster.isPrimary) {
       allowedHeaders: ["Content-Type", "Authorization"],
     })
   );
+  // const redisClient = redis.createClient({ url: REDIS_URL });
   const redisClient = redis.createClient({ url: REDIS_URL });
+  // await redisClient.connect();
   redisClient
-    .connect(() => console.log("Connected to Redis"))
-    .catch(console.error);
+  .connect(() => console.log("Connected to Redis"))
+  .catch(console.error);
+  await redisClient.select(0);
 
   app.use(
     session({
@@ -72,6 +75,7 @@ if (cluster.isPrimary) {
   app.post("/upload", upload.single("file"), async (req, res) => {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
     // Track upload in Redis (for progress, etc.)
+    console.log('file uploaded ', req.file)
     await redisClient.set(
       `upload:${req.file.filename}`,
       JSON.stringify({
@@ -82,6 +86,7 @@ if (cluster.isPrimary) {
       }),
       { EX: 3600 }
     );
+    console.log('file info saved to redis')
     // Return S3-style URL
     const fileUrl = `${BASE_URL}/${req.file.filename}`;
     res.json({ url: fileUrl });
@@ -98,7 +103,7 @@ if (cluster.isPrimary) {
     }
   });
 
-  app.get("/", (req, res) => {
+  app.get("/health", (req, res) => {
     res.send("File server is running");
   });
 
@@ -123,10 +128,10 @@ if (cluster.isPrimary) {
   });
 
   // Serve files (Nginx should handle this in production)
-  app.use("/files", express.static(UPLOAD_DIR));
+  app.use("/", express.static(UPLOAD_DIR));
 
-  app.listen(process.env.PORT, () => {
-    console.log(`Worker ${process.pid} started on port ${process.env.PORT}`);
+  app.listen(process.env.FILESERVER_PORT, () => {
+    console.log(`Worker ${process.pid} started on port ${process.env.FILESERVER_PORT}`);
     console.log(`url is ${BASE_URL}`);
   });
 }
