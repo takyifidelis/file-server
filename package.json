@@ -11,6 +11,8 @@
     "docker-build": "docker build -t fileserver .",
     "docker-publish": "docker tag fileserver eawebmaster20/fileserver:latest && docker push eawebmaster20/fileserver:latest",
     "copy-to-server": "scp docker-compose.yml admin@172.30.10.210:~/",
+    "copy-from-server": "scp -r sdesk@172.30.10.45:/home/sdesk/Desktop/fserver/db-backups ./db-backups",
+    "sync-from-server": "rsync -av --checksum sdesk@172.30.10.45:/home/sdesk/Desktop/fserver/db-backups ./db-backups",
     "sh": "docker exec -it 80d3 sh"
   },
   "dependencies": {
