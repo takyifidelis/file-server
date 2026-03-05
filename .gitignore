@@ -1,3 +1,7 @@
 node_modules/
 logs/
+db-backups/
+db-backup/
+storage/
+uploads/
 .env
