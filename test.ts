@@ -1,9 +1,0 @@
-https://sibauat.starassurance.com/PolicySchedule/Index?
-product=motorSchedule&
-polSysID=379639&
-endNumber=0&
-renewalNo=0&
-username=Admin&
-polState=P&
-urlLogo=https://sibauat.starassurance.com/Content/Images/logos/LogoStar.jpg&
-urlLogo=
