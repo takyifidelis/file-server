@@ -4,4 +4,5 @@ db-backups/
 db-backup/
 storage/
 uploads/
+ssl/sdesk*
 .env
