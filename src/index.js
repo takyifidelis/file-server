@@ -14,7 +14,7 @@ import cors from "cors";
 
 dotenv.config();
 
-const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, "../storage");
+const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), "storage");
 const REDIS_URL =  process.env.FILESERVER_REDIS_URL || "redis://localhost:6379/0";
 const BASE_URL = process.env.FILESERVER_BASE_URL || "https://yourdomain.com/files";
 

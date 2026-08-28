@@ -62,21 +62,6 @@ services:
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
     volumes:
       - grafana_data:/var/lib/grafana
-  web:
-    image: eawebmaster20/frontend:latest
-    ports:
-      - '4200:80'
-    restart: unless-stopped
-  app:
-    image: eawebmaster20/api_server:latest
-    ports:
-      - "3005:3000"
-    env_file:
-      - .env-api
-    depends_on:
-      - db
-    restart: unless-stopped
-    command: ["node", "dist/index.js"]
   db:
     image: postgres:15-alpine
     environment:
